@@ -6,18 +6,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 const isDark = ref(false)
 
+function setDarkMode(val) {
+  isDark.value = val
+  document.documentElement.classList.toggle('dark', val)
+  localStorage.setItem('theme', val ? 'dark' : 'light')
+}
+
 function toggleDark() {
-  isDark.value = !isDark.value
-  document.documentElement.classList.toggle('dark', isDark.value)
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  setDarkMode(!isDark.value)
 }
 
 onMounted(() => {
   const theme = localStorage.getItem('theme')
-  isDark.value = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  document.documentElement.classList.toggle('dark', isDark.value)
+  if (theme === 'dark') setDarkMode(true)
+  else if (theme === 'light') setDarkMode(false)
+  else setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
 })
+
+watch(isDark, (val) => setDarkMode(val))
 </script> 
