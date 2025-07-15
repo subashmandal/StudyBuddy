@@ -66,3 +66,19 @@ app.use(createPinia())
 app.use(i18n)
 app.use(router)
 app.mount('#app')
+
+import Echo from 'laravel-echo';
+window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: '01bd7ab492b8cafaca8b',
+  cluster: 'ap2',
+  forceTLS: true,
+});
+
+window.Echo.channel('test-channel')
+    .listen('TestBroadcastEvent', (e) => {
+        console.log('Broadcast received:', e);
+        alert('Broadcast received: ' + e.message);
+    });
